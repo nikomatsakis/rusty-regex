@@ -7,7 +7,7 @@ macro_rules! rusty_regex {
     ($name:ident = $($tokens:tt)+) => {
         pub fn $name(text: &str) -> Option<usize> {
             let mut captures = vec![];
-            let regex = rusty_regex_parse_tokens!($($tokens),*,);
+            let regex = rusty_regex_parse_tokens!($($tokens,)*);
             $crate::RegexThen::match_then(&regex, text, 0, &mut captures, &$crate::util::Accept)
         }
     };
@@ -20,32 +20,32 @@ macro_rules! rusty_regex_parse_tokens {
         $crate::util::Accept
     };
 
-    ($token:tt, *, ?, $($tokens:tt),*) => {
+    ($token:tt, *, ?, $($tokens:tt,)*) => {
         ($crate::util::RepeatMin(rusty_regex_parse_token!($token), 0),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
 
-    ($token:tt, *, $($tokens:tt),*) => {
-        ($crate::util::RepeatMax(rusty_regex_parse_token!($token), 0),
+    ($token:tt, *, $($tokens:tt,)*) => {
+        ($crate::util::StarMax(rusty_regex_parse_token!($token)),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
 
-    ($token:tt, +, ?, $($tokens:tt),*) => {
+    ($token:tt, +, ?, $($tokens:tt,)*) => {
         ($crate::util::RepeatMin(rusty_regex_parse_token!($token), 1),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
 
-    ($token:tt, +, $($tokens:tt),*) => {
-        ($crate::util::RepeatMax(rusty_regex_parse_token!($token), 1),
+    ($token:tt, +, $($tokens:tt,)*) => {
+        ($crate::util::PlusMax(rusty_regex_parse_token!($token)),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
 
-    ($token:tt, ?, $($tokens:tt),*) => {
+    ($token:tt, ?, $($tokens:tt,)*) => {
         ($crate::util::Question(rusty_regex_parse_token!($token)),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
 
-    ($token:tt, $($tokens:tt),*) => {
+    ($token:tt, $($tokens:tt,)*) => {
         (rusty_regex_parse_token!($token),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
