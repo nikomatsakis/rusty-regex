@@ -1,5 +1,7 @@
 use Capture;
 
+///////////////////////////////////////////////////////////////////////////
+
 rusty_regex! { literal_re = "hi" }
 
 #[test]
@@ -7,6 +9,8 @@ fn literal() {
     assert_eq!(literal_re("hi").unwrap()[0].end, 2);
     assert!(literal_re("ho").is_none());
 }
+
+///////////////////////////////////////////////////////////////////////////
 
 rusty_regex! { literal_star_re = "hi"* }
 
@@ -18,6 +22,8 @@ fn literal_star() {
     assert!(literal_star_re("hohihi").unwrap()[0].end == 0);
 }
 
+///////////////////////////////////////////////////////////////////////////
+
 rusty_regex! { literal_plus_re = "hi"+ }
 
 #[test]
@@ -27,6 +33,8 @@ fn literal_plus() {
     assert!(literal_plus_re("hihohi").unwrap()[0].end == 2);
     assert!(literal_plus_re("hohihi").is_none());
 }
+
+///////////////////////////////////////////////////////////////////////////
 
 rusty_regex! { literal_literal_re = "hi" "ho"}
 
@@ -38,6 +46,8 @@ fn literal_literal() {
     assert!(literal_literal_re("hohihi").is_none());
 }
 
+///////////////////////////////////////////////////////////////////////////
+
 rusty_regex! { literal_star_literal_re = ("hi"*) "ho"}
 
 #[test]
@@ -46,6 +56,8 @@ fn literal_star_literal() {
     assert!(literal_star_literal_re("hihiho").is_some());
     assert!(literal_star_literal_re("hihiho").unwrap()[1].end == 4);
 }
+
+///////////////////////////////////////////////////////////////////////////
 
 rusty_regex! { star_plus_re = ("hi"*) ("hi"+) }
 
@@ -64,6 +76,8 @@ fn star_plus() {
         ]);
 }
 
+///////////////////////////////////////////////////////////////////////////
+
 rusty_regex! { plus_plus_re = ("hi"+) ("hi"+) }
 
 #[test]
@@ -75,5 +89,37 @@ fn plus_plus() {
         ]);
 
     assert!(plus_plus_re("hi").is_none());
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { paren_no_cap_re = (?:"hi" "hi")+ ("hi"+) }
+
+#[test]
+fn paren_no_cap() {
+    assert_eq!(paren_no_cap_re("hihihi").unwrap(), vec![
+        Capture { text: "hihihi", start: 0, end: 6 },
+        Capture { text: "hihihi", start: 4, end: 6 }
+        ]);
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { char_range_re = ['a' 'b' 'c']+ }
+
+#[test]
+fn char_range() {
+    assert!(char_range_re("abc").is_some());
+    assert!(char_range_re("def").is_none());
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { inv_char_range_re = [^ 'a' 'b' 'c']+ }
+
+#[test]
+fn inv_char_range() {
+    assert!(inv_char_range_re("abc").is_none());
+    assert!(inv_char_range_re("def").is_some());
 }
 

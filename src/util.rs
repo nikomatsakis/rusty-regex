@@ -242,7 +242,7 @@ impl<CR> RegexThen for Choice<CR>
 }
 
 #[derive(Clone, Debug)]
-pub struct CharChoice(char);
+pub struct CharChoice(pub char);
 
 impl CharRange for CharChoice {
     fn test(&self, c: char) -> bool {
@@ -263,7 +263,7 @@ impl CharRange for RangeChoice {
 }
 
 #[derive(Clone, Debug)]
-pub struct NotChoice<CR>(CR);
+pub struct NotChoice<CR>(pub CR);
 
 impl<CR:CharRange> CharRange for NotChoice<CR> {
     fn test(&self, c: char) -> bool {
@@ -272,7 +272,7 @@ impl<CR:CharRange> CharRange for NotChoice<CR> {
 }
 
 #[derive(Clone, Debug)]
-pub struct OrChoice<CR1,CR2>(CR1, CR2);
+pub struct OrChoice<CR1,CR2>(pub CR1, pub CR2);
 
 impl<CR1:CharRange,CR2:CharRange> CharRange for OrChoice<CR1,CR2> {
     fn test(&self, c: char) -> bool {

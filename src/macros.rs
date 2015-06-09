@@ -8,7 +8,6 @@ macro_rules! rusty_regex {
         pub fn $name<'text>(text: &'text str) -> Option<Vec<$crate::Capture<'text>>> {
             let mut captures = vec![];
             let regex = $crate::util::CaptureRe(rusty_regex_parse_tokens!($($tokens,)*));
-            println!("regex={:?}", regex);
             $crate::RegexThen::match_then(&regex, text, 0, &mut captures, &$crate::util::Accept)
                 .map(|_| captures)
         }
@@ -56,6 +55,10 @@ macro_rules! rusty_regex_parse_tokens {
 #[macro_export]
 #[doc(hidden)]
 macro_rules! rusty_regex_parse_token {
+    ((? : $($token:tt)*)) => {
+        rusty_regex_parse_tokens!($($token,)*)
+    };
+
     (($($token:tt)*)) => {
         $crate::util::CaptureRe(rusty_regex_parse_tokens!($($token,)*))
     };
@@ -65,7 +68,7 @@ macro_rules! rusty_regex_parse_token {
     };
 
     ([$($token:tt)+]) => {
-        $crate::util::Choice(rusty_regex_parse_choices!($($token,)+, ()))
+        $crate::util::Choice(rusty_regex_parse_choices!($($token,)+))
     };
 
     ($literal:expr) => {
@@ -76,19 +79,23 @@ macro_rules! rusty_regex_parse_token {
 #[macro_export]
 #[doc(hidden)]
 macro_rules! rusty_regex_parse_choices {
-    (()) => {
-        NoChoice
+    () => {
+        $crate::util::NoChoice
     };
 
-    (^, $($tokens:tt),+) => {
-        NotChoice(rusty_regex_parse_choices!($($tokens),+))
+    (^, $($tokens:tt,)*) => {
+        $crate::util::NotChoice(rusty_regex_parse_choices!($($tokens,)*))
     };
 
-    ($start:expr, -, $end:expr, $($tokens:tt),+) => {
-        OrChoice(RangeChoice($start, $end), rusty_regex_parse_choices!($($tokens),+))
+    ($start:expr, -, $end:expr, $($tokens:tt,)*) => {
+        $crate::util::OrChoice(
+            $crate::util::RangeChoice($start, $end),
+            rusty_regex_parse_choices!($($tokens,)*))
     };
 
-    ($c:expr, $($tokens:tt),+) => {
-        OrChoice(RangeChoice($start, $end), rusty_regex_parse_choices!($($tokens),+))
+    ($c:expr, $($tokens:tt,)*) => {
+        $crate::util::OrChoice(
+            $crate::util::CharChoice($c),
+            rusty_regex_parse_choices!($($tokens,)*))
     };
 }
