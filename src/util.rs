@@ -338,7 +338,7 @@ impl CharRange for CharChoice {
 }
 
 #[derive(Clone, Debug)]
-pub struct RangeChoice(char, char);
+pub struct RangeChoice(pub char, pub char);
 
 impl CharRange for RangeChoice {
     fn test(&self, c: char) -> bool {
