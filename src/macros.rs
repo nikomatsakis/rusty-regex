@@ -71,6 +71,10 @@ macro_rules! rusty_regex_parse_token {
         $crate::util::Choice(rusty_regex_parse_choices!($($token,)+))
     };
 
+    (END) => {
+        $crate::util::End
+    };
+
     ($literal:expr) => {
         $crate::util::Literal($literal)
     };

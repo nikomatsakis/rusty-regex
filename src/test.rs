@@ -123,3 +123,15 @@ fn inv_char_range() {
     assert!(inv_char_range_re("def").is_some());
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { end_re = ['a' 'b' 'c']* END }
+
+#[test]
+fn end() {
+    assert!(end_re("").is_some());
+    assert!(end_re("abcabc").is_some());
+    assert!(end_re("abcabcd").is_none());
+}
+

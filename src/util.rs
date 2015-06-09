@@ -27,6 +27,26 @@ impl RegexContinuation for Accept {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct End;
+
+impl RegexThen for End {
+    fn match_then<'text,C>(&self,
+                           text: &'text str,
+                           position: usize,
+                           captures: &mut Vec<Capture<'text>>,
+                           continuation: &C)
+                           -> Option<usize>
+        where C: RegexContinuation
+    {
+        if position == text.len() {
+            continuation.match_continue(text, position, captures)
+        } else {
+            None
+        }
+    }
+}
+
 impl<R,U> RegexThen for (R,U)
     where R: RegexThen, U: RegexThen
 {
