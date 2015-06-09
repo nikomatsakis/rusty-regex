@@ -1,5 +1,11 @@
 use Capture;
 
+fn to_captures<'text>(c: Vec<Capture<'text>>) -> Vec<&'text str> {
+    c.iter()
+     .map(|c| c.to_str())
+     .collect()
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 rusty_regex! { literal_re = ^ "hi" }
@@ -207,7 +213,6 @@ fn dot() {
     assert!(dot_re("").is_some());
 }
 
-
 ///////////////////////////////////////////////////////////////////////////
 
 rusty_regex! { missing_anchor_re = "a"+ }
@@ -219,5 +224,21 @@ fn missing_anchor() {
 
     // does not:
     assert!(missing_anchor_re("gjoijqpvdsf").is_none());
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! {
+    uri_re =
+        (['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9']*) // e.g., http
+        "://"
+        ([^' ' '/']+)
+        ("/" [^' ']*)?
+}
+
+#[test]
+fn uri() {
+    assert_eq!(to_captures(uri_re("The url is http://foo/bar/baz so go click on it!").unwrap()),
+               vec!["http://foo/bar/baz", "http", "foo", "/bar/baz"]);
 }
 
