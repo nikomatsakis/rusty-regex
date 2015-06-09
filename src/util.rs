@@ -151,6 +151,71 @@ impl<'a,R,C> RegexContinuation for StarMaxState<'a,R,C>
 }
 
 #[derive(Clone, Debug)]
+pub struct StarMin<R>(pub R);
+
+impl<R> RegexThen for StarMin<R>
+    where R: RegexThen
+{
+    fn match_then<'text,C>(&self,
+                           text: &'text str,
+                           position: usize,
+                           captures: &mut Vec<Capture<'text>>,
+                           continuation: &C)
+                           -> Option<usize>
+        where C: RegexContinuation
+    {
+        let state = StarMinState { repeat: &self.0, continuation: continuation };
+        state.match_continue(text, position, captures)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct PlusMin<R>(pub R);
+
+impl<R> RegexThen for PlusMin<R>
+    where R: RegexThen
+{
+    fn match_then<'text,C>(&self,
+                           text: &'text str,
+                           position: usize,
+                           captures: &mut Vec<Capture<'text>>,
+                           continuation: &C)
+                           -> Option<usize>
+        where C: RegexContinuation
+    {
+        let state = StarMinState { repeat: &self.0, continuation: continuation };
+        self.0.match_then(text, position, captures, &state)
+    }
+}
+
+struct StarMinState<'a,R:'a,C:'a> {
+    repeat: &'a R,
+    continuation: &'a C,
+}
+
+impl<'a,R,C> RegexContinuation for StarMinState<'a,R,C>
+    where R: RegexThen, C: RegexContinuation
+{
+    fn match_continue<'text>(&self,
+                             text: &'text str,
+                             start: usize,
+                             captures: &mut Vec<Capture<'text>>)
+                             -> Option<usize>
+    {
+        // First try what comes after us:
+        let captures_len = captures.len();
+        match self.continuation.match_continue(text, start, captures) {
+            Some(end) => Some(end),
+            None => {
+                // If that fails, then try the repeat and come back to this point:
+                captures.truncate(captures_len);
+                self.repeat.match_then(text, start, captures, self)
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Question<R>(pub R);
 
 impl<R> RegexThen for Question<R>

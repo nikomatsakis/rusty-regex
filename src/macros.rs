@@ -22,7 +22,7 @@ macro_rules! rusty_regex_parse_tokens {
     };
 
     ($token:tt, *, ?, $($tokens:tt,)*) => {
-        ($crate::util::RepeatMin(rusty_regex_parse_token!($token), 0),
+        ($crate::util::StarMin(rusty_regex_parse_token!($token)),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
 
@@ -32,7 +32,7 @@ macro_rules! rusty_regex_parse_tokens {
     };
 
     ($token:tt, +, ?, $($tokens:tt,)*) => {
-        ($crate::util::RepeatMin(rusty_regex_parse_token!($token), 1),
+        ($crate::util::PlusMin(rusty_regex_parse_token!($token)),
          rusty_regex_parse_tokens!($($tokens,)*))
     };
 

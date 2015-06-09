@@ -78,6 +78,44 @@ fn star_plus() {
 
 ///////////////////////////////////////////////////////////////////////////
 
+rusty_regex! { star_min_plus_re = ("hi"*?) ("hi"+) }
+
+#[test]
+fn star_min_plus() {
+    assert_eq!(star_min_plus_re("hihihi").unwrap(), vec![
+        Capture { text: "hihihi", start: 0, end: 6 },
+        Capture { text: "hihihi", start: 0, end: 0 },
+        Capture { text: "hihihi", start: 0, end: 6 }
+        ]);
+
+    assert_eq!(star_min_plus_re("hi").unwrap(), vec![
+        Capture { text: "hi", start: 0, end: 2 },
+        Capture { text: "hi", start: 0, end: 0 },
+        Capture { text: "hi", start: 0, end: 2 }
+        ]);
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { star_min_hi_plus_ho_end_re = (['a' 'c']*?) (['b' 'c']+) END }
+
+#[test]
+fn star_min_hi_plus_ho() {
+    assert_eq!(star_min_hi_plus_ho_re("aacbbc").unwrap(), vec![
+        Capture { text: "aacbbc", start: 0, end: 6 },
+        Capture { text: "aacbbc", start: 0, end: 2 },
+        Capture { text: "aacbbc", start: 2, end: 6 },
+        ]);
+
+    assert_eq!(star_min_hi_plus_ho_re("aacabbc").unwrap(), vec![
+        Capture { text: "aacabbc", start: 0, end: 7 },
+        Capture { text: "aacabbc", start: 0, end: 4 },
+        Capture { text: "aacabbc", start: 4, end: 7 },
+        ]);
+}
+
+///////////////////////////////////////////////////////////////////////////
+
 rusty_regex! { plus_plus_re = ("hi"+) ("hi"+) }
 
 #[test]
