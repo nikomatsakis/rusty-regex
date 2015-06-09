@@ -119,9 +119,13 @@ impl<'a,R,C> RegexContinuation for StarMaxState<'a,R,C>
         // match the repeating part, we will resume in the same state,
         // ready to try again, but with a different start point.  Only
         // once we fail will we fallback to `self.continuation`.
+        let captures_len = captures.len();
         match self.repeat.match_then(text, start, captures, self) {
             Some(end) => Some(end),
-            None => self.continuation.match_continue(text, start, captures)
+            None => {
+                captures.truncate(captures_len);
+                self.continuation.match_continue(text, start, captures)
+            }
         }
     }
 }

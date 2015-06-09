@@ -28,8 +28,15 @@ pub trait CharRange {
     fn test(&self, c: char) -> bool;
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Capture<'text> {
     text: &'text str,
     start: usize,
     end: usize,
+}
+
+impl<'text> Capture<'text> {
+    fn to_str(self) -> &'text str {
+        &self.text[self.start..self.end]
+    }
 }

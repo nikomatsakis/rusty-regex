@@ -8,6 +8,7 @@ macro_rules! rusty_regex {
         pub fn $name<'text>(text: &'text str) -> Option<Vec<$crate::Capture<'text>>> {
             let mut captures = vec![];
             let regex = $crate::util::CaptureRe(rusty_regex_parse_tokens!($($tokens,)*));
+            println!("regex={:?}", regex);
             $crate::RegexThen::match_then(&regex, text, 0, &mut captures, &$crate::util::Accept)
                 .map(|_| captures)
         }
