@@ -2,7 +2,7 @@ use Capture;
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { literal_re = "hi" }
+rusty_regex! { literal_re = ^"hi" }
 
 #[test]
 fn literal() {
@@ -12,7 +12,7 @@ fn literal() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { literal_star_re = "hi"* }
+rusty_regex! { literal_star_re = ^"hi"* }
 
 #[test]
 fn literal_star() {
@@ -24,7 +24,7 @@ fn literal_star() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { literal_plus_re = "hi"+ }
+rusty_regex! { literal_plus_re = ^"hi"+ }
 
 #[test]
 fn literal_plus() {
@@ -36,7 +36,7 @@ fn literal_plus() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { literal_literal_re = "hi" "ho"}
+rusty_regex! { literal_literal_re = ^"hi" "ho"}
 
 #[test]
 fn literal_literal() {
@@ -48,7 +48,7 @@ fn literal_literal() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { literal_star_literal_re = ("hi"*) "ho"}
+rusty_regex! { literal_star_literal_re = ^("hi"*) "ho"}
 
 #[test]
 fn literal_star_literal() {
@@ -59,7 +59,7 @@ fn literal_star_literal() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { star_plus_re = ("hi"*) ("hi"+) }
+rusty_regex! { star_plus_re = ^("hi"*) ("hi"+) }
 
 #[test]
 fn star_plus() {
@@ -78,7 +78,7 @@ fn star_plus() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { star_min_plus_re = ("hi"*?) ("hi"+) }
+rusty_regex! { star_min_plus_re = ^("hi"*?) ("hi"+) }
 
 #[test]
 fn star_min_plus() {
@@ -97,7 +97,7 @@ fn star_min_plus() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { star_min_hi_plus_ho_end_re = (['a' 'c']*?) (['b' 'c']+) END }
+rusty_regex! { star_min_hi_plus_ho_end_re = ^(['a' 'c']*?) (['b' 'c']+) END }
 
 #[test]
 fn star_min_hi_plus_ho() {
@@ -116,7 +116,7 @@ fn star_min_hi_plus_ho() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { plus_plus_re = ("hi"+) ("hi"+) }
+rusty_regex! { plus_plus_re = ^("hi"+) ("hi"+) }
 
 #[test]
 fn plus_plus() {
@@ -131,7 +131,7 @@ fn plus_plus() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { paren_no_cap_re = (?:"hi" "hi")+ ("hi"+) }
+rusty_regex! { paren_no_cap_re = ^(?:"hi" "hi")+ ("hi"+) }
 
 #[test]
 fn paren_no_cap() {
@@ -143,7 +143,7 @@ fn paren_no_cap() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { char_range_re = ['a' 'b' 'c']+ }
+rusty_regex! { char_range_re = ^['a' 'b' 'c']+ }
 
 #[test]
 fn char_range() {
@@ -153,7 +153,7 @@ fn char_range() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { inv_char_range_re = [^ 'a' 'b' 'c']+ }
+rusty_regex! { inv_char_range_re = ^[^ 'a' 'b' 'c']+ }
 
 #[test]
 fn inv_char_range() {
@@ -164,7 +164,7 @@ fn inv_char_range() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { end_re = ['a' 'b' 'c']* END }
+rusty_regex! { end_re = ^['a' 'b' 'c']* END }
 
 #[test]
 fn end() {
@@ -175,7 +175,7 @@ fn end() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { digit_re = [:digit:]* END }
+rusty_regex! { digit_re = ^[:digit:]* END }
 
 #[test]
 fn digit() {
@@ -186,7 +186,7 @@ fn digit() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { digit_or_space_re = [:digit: :space:]* END }
+rusty_regex! { digit_or_space_re = ^[:digit: :space:]* END }
 
 #[test]
 fn digit_or_space() {
@@ -197,7 +197,7 @@ fn digit_or_space() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-rusty_regex! { dot_re = .* END }
+rusty_regex! { dot_re = ^.* END }
 
 #[test]
 fn dot() {
@@ -205,5 +205,19 @@ fn dot() {
     assert!(dot_re("0 123").is_some());
     assert!(dot_re("abc").is_some());
     assert!(dot_re("").is_some());
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { missing_anchor_re = "a"+ }
+
+#[test]
+fn missing_anchor() {
+    // contains an 'a':
+    assert!(missing_anchor_re("gjoijqpavadsaf").is_some());
+
+    // does not:
+    assert!(missing_anchor_re("gjoijqpvdsf").is_none());
 }
 

@@ -4,10 +4,22 @@
 
 #[macro_export]
 macro_rules! rusty_regex {
-    ($name:ident = $($tokens:tt)+) => {
+    ($name:ident = ^ $($tokens:tt)+) => {
         pub fn $name<'text>(text: &'text str) -> Option<Vec<$crate::Capture<'text>>> {
             let mut captures = vec![];
             let regex = $crate::util::CaptureRe(rusty_regex_parse_tokens!($($tokens,)*));
+            $crate::RegexThen::match_then(&regex, text, 0, &mut captures, &$crate::util::Accept)
+                .map(|_| captures)
+        }
+    };
+
+    // if no leading `^` is provided, insert an implicit `.*?`
+    ($name:ident = $($tokens:tt)+) => {
+        pub fn $name<'text>(text: &'text str) -> Option<Vec<$crate::Capture<'text>>> {
+            let mut captures = vec![];
+            let regex =
+                ($crate::util::StarMin($crate::util::Choice($crate::util::YesChoice)),
+                 $crate::util::CaptureRe(rusty_regex_parse_tokens!($($tokens,)*)));
             $crate::RegexThen::match_then(&regex, text, 0, &mut captures, &$crate::util::Accept)
                 .map(|_| captures)
         }
