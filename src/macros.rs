@@ -63,10 +63,6 @@ macro_rules! rusty_regex_parse_token {
         $crate::util::CaptureRe(rusty_regex_parse_tokens!($($token,)*))
     };
 
-    ([:$i:ident:]) => {
-        $crate::util::named_choices::$i
-    };
-
     ([$($token:tt)+]) => {
         $crate::util::Choice(rusty_regex_parse_choices!($($token,)+))
     };
@@ -85,6 +81,12 @@ macro_rules! rusty_regex_parse_token {
 macro_rules! rusty_regex_parse_choices {
     () => {
         $crate::util::NoChoice
+    };
+
+    (:, $i:ident, :, $($tokens:tt,)*) => {
+        $crate::util::OrChoice(
+            $crate::util::named_choices::$i,
+            rusty_regex_parse_choices!($($tokens,)*))
     };
 
     (^, $($tokens:tt,)*) => {

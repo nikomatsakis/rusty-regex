@@ -317,12 +317,14 @@ impl<CR> RegexThen for Choice<CR>
                            -> Option<usize>
         where C: RegexContinuation
     {
-        let bytes = text.as_bytes(); // XXX
-        if position < bytes.len() && self.0.test(bytes[position] as char) {
-            continuation.match_continue(text, position + 1, captures)
-        } else {
-            None
+        if let Some(c) = text[position..].chars().next() {
+            if self.0.test(c) {
+                let l = c.len_utf8();
+                return continuation.match_continue(text, position + l, captures);
+            }
         }
+
+        None
     }
 }
 
@@ -382,11 +384,23 @@ pub mod named_choices {
 
     impl CharRange for alpha {
         fn test(&self, c: char) -> bool {
-            match c {
-                'a' ... 'z' |
-                'A' ... 'Z' => true,
-                _ => false
-            } // XXX
+            char::is_alphabetic(c)
+        }
+    }
+
+    pub struct digit;
+
+    impl CharRange for digit {
+        fn test(&self, c: char) -> bool {
+            c >= '0' && c <= '9'
+        }
+    }
+
+    pub struct space;
+
+    impl CharRange for space {
+        fn test(&self, c: char) -> bool {
+            char::is_whitespace(c)
         }
     }
 }

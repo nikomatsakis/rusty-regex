@@ -101,13 +101,13 @@ rusty_regex! { star_min_hi_plus_ho_end_re = (['a' 'c']*?) (['b' 'c']+) END }
 
 #[test]
 fn star_min_hi_plus_ho() {
-    assert_eq!(star_min_hi_plus_ho_re("aacbbc").unwrap(), vec![
+    assert_eq!(star_min_hi_plus_ho_end_re("aacbbc").unwrap(), vec![
         Capture { text: "aacbbc", start: 0, end: 6 },
         Capture { text: "aacbbc", start: 0, end: 2 },
         Capture { text: "aacbbc", start: 2, end: 6 },
         ]);
 
-    assert_eq!(star_min_hi_plus_ho_re("aacabbc").unwrap(), vec![
+    assert_eq!(star_min_hi_plus_ho_end_re("aacabbc").unwrap(), vec![
         Capture { text: "aacabbc", start: 0, end: 7 },
         Capture { text: "aacabbc", start: 0, end: 4 },
         Capture { text: "aacabbc", start: 4, end: 7 },
@@ -171,5 +171,27 @@ fn end() {
     assert!(end_re("").is_some());
     assert!(end_re("abcabc").is_some());
     assert!(end_re("abcabcd").is_none());
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { digit_re = [:digit:]* END }
+
+#[test]
+fn digit() {
+    assert!(digit_re("0123").is_some());
+    assert!(digit_re("0 123").is_none());
+    assert!(digit_re("abc").is_none());
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { digit_or_space_re = [:digit: :space:]* END }
+
+#[test]
+fn digit_or_space() {
+    assert!(digit_or_space_re("0123").is_some());
+    assert!(digit_or_space_re("0 123").is_some());
+    assert!(digit_or_space_re("abc").is_none());
 }
 
