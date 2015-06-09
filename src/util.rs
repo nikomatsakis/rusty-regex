@@ -376,6 +376,15 @@ impl CharRange for NoChoice {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct YesChoice;
+
+impl CharRange for YesChoice {
+    fn test(&self, _: char) -> bool {
+        true
+    }
+}
+
 pub mod named_choices {
     #![allow(non_camel_case_types)]
     use CharRange;

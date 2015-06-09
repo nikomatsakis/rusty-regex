@@ -195,3 +195,15 @@ fn digit_or_space() {
     assert!(digit_or_space_re("abc").is_none());
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+rusty_regex! { dot_re = .* END }
+
+#[test]
+fn dot() {
+    assert!(dot_re("0123").is_some());
+    assert!(dot_re("0 123").is_some());
+    assert!(dot_re("abc").is_some());
+    assert!(dot_re("").is_some());
+}
+
