@@ -35,3 +35,12 @@ fn literal_literal() {
     assert!(literal_literal_re("hihohi").unwrap()[0].end == 4);
     assert!(literal_literal_re("hohihi").is_none());
 }
+
+rusty_regex! { literal_star_literal_re = ("hi"*) "ho"}
+
+#[test]
+fn literal_star_literal() {
+    assert!(literal_star_literal_re("hihihi").is_none());
+    assert!(literal_star_literal_re("hihiho").is_some());
+    assert!(literal_star_literal_re("hihiho").unwrap()[1].end == 4);
+}
